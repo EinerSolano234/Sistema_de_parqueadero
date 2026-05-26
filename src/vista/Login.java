@@ -6,6 +6,12 @@ package vista;
 
 import java.awt.Color;
 import javax.swing.JOptionPane;
+import conexion.Conexion;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import javax.swing.JOptionPane;
+
 
 
 /**
@@ -66,6 +72,7 @@ public class Login extends javax.swing.JFrame {
         usuario.setBackground(new java.awt.Color(0, 0, 0));
         usuario.setFont(new java.awt.Font("Roboto", 1, 14)); // NOI18N
         usuario.setForeground(new java.awt.Color(0, 0, 0));
+        usuario.setIcon(new javax.swing.ImageIcon(getClass().getResource("/assets/usuario (1).png"))); // NOI18N
         usuario.setText("USUARIO");
         bg.add(usuario, new org.netbeans.lib.awtextra.AbsoluteConstraints(30, 230, -1, -1));
 
@@ -87,7 +94,8 @@ public class Login extends javax.swing.JFrame {
         passLabel.setBackground(new java.awt.Color(0, 0, 0));
         passLabel.setFont(new java.awt.Font("Roboto", 1, 14)); // NOI18N
         passLabel.setForeground(new java.awt.Color(0, 0, 0));
-        passLabel.setText("CONTRASEÑA");
+        passLabel.setIcon(new javax.swing.ImageIcon(getClass().getResource("/assets/clave-de-usuario.png"))); // NOI18N
+        passLabel.setText("CONTRASENA");
         bg.add(passLabel, new org.netbeans.lib.awtextra.AbsoluteConstraints(30, 310, -1, 20));
 
         jSeparator2.setForeground(new java.awt.Color(0, 0, 0));
@@ -110,6 +118,7 @@ public class Login extends javax.swing.JFrame {
 
         loginBtnTxt.setFont(new java.awt.Font("Roboto", 1, 18)); // NOI18N
         loginBtnTxt.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        loginBtnTxt.setIcon(new javax.swing.ImageIcon(getClass().getResource("/assets/alt-de-inicio-de-sesion.png"))); // NOI18N
         loginBtnTxt.setText("ENTRAR");
         loginBtnTxt.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
         loginBtnTxt.addMouseListener(new java.awt.event.MouseAdapter() {
@@ -177,7 +186,43 @@ public class Login extends javax.swing.JFrame {
     }//GEN-LAST:event_passTxtMousePressed
 
     private void loginBtnTxtMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_loginBtnTxtMouseClicked
-        javax.swing.JOptionPane.showMessageDialog(this, "intento de login con los datos:\nUsuario:"+ userTxt.getText()+ "\nContraseña: "+ String.valueOf(passTxt.getPassword()), "LOGIN" , javax.swing.JOptionPane.INFORMATION_MESSAGE);
+           Conexion objetoConexion = new Conexion();
+           Connection conexion = objetoConexion.establecerConexion();
+
+           String usuario = userTxt.getText();
+           String contrasena = passTxt.getText();
+
+           String consulta = "SELECT * FROM tb_usuario WHERE usuario=? AND contrasena=?";
+
+       try {
+
+        PreparedStatement ps = conexion.prepareStatement(consulta);
+
+        ps.setString(1, usuario);
+        ps.setString(2, contrasena);
+
+        ResultSet rs = ps.executeQuery();
+
+        if(rs.next()) {
+
+            JOptionPane.showMessageDialog(null, "Bienvenido");
+
+            Menu menu = new Menu();
+            menu.setVisible(true);
+
+            this.dispose();
+
+        } else {
+
+            JOptionPane.showMessageDialog(null, "Usuario o contraseña incorrectos");
+
+        }
+
+       } catch (Exception e) {
+
+        JOptionPane.showMessageDialog(null, "Error: " + e.toString());
+
+        }
     }//GEN-LAST:event_loginBtnTxtMouseClicked
 
     /**
